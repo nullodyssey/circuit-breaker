@@ -25,7 +25,10 @@ A robust and feature-rich implementation of the Circuit Breaker pattern for PHP 
 - [Monitoring & Metrics](#-monitoring--metrics)
 - [Architecture](#-architecture)
 - [Thread Safety](#-thread-safety)
-- [Performance Considerations](#-performance-considerations)
+- [Roadmap & Future Features](#-roadmap--future-features)
+  - [Phase 1: Core Enhancements](#phase-1-core-enhancements)
+  - [Phase 2: Advanced Features](#phase-2-advanced-features)
+  - [Phase 3: Framework Integration](#phase-3-framework-integration)
 - [Contributing](#-contributing)
 - [License](#-license)
 - [Further Reading](#-further-reading)
@@ -328,16 +331,6 @@ services:
 
     # Alias for easier injection
     NullOdyssey\CircuitBreaker\CircuitBreakerFactory: '@circuit_breaker.factory'
-```
-
-### Environment Configuration
-
-```env
-# .env
-REDIS_HOST=127.0.0.1
-REDIS_PORT=6379
-REDIS_PASSWORD=your_password
-REDIS_LOCK_DB=1
 ```
 
 ### Usage in Controllers
@@ -713,15 +706,6 @@ CircuitBreakerState (enum: CLOSED, OPEN, HALF_OPEN)
 CircuitBreakerException (thrown when circuit is open)
 ```
 
-### Key Design Principles
-
-1. **Interface Segregation**: Small, focused interfaces
-2. **Dependency Inversion**: Depend on abstractions, not concretions
-3. **Single Responsibility**: Each class has one clear purpose
-4. **Open/Closed**: Extensible through interfaces
-5. **Immutability**: State data objects are readonly
-6. **Type Safety**: Strict typing throughout
-
 ## 🔒 Thread Safety
 
 The persistent circuit breaker provides thread safety through:
@@ -730,12 +714,41 @@ The persistent circuit breaker provides thread safety through:
 - **Atomic operations**: State changes are atomic within locks
 - **Consistent state**: Ensures all workers see the same state
 
-## 📈 Performance Considerations
+## 🗺️ Roadmap & Future Features
 
-- **Minimal overhead**: Fast state checks and transitions
-- **Memory efficient**: Small memory footprint per circuit breaker
-- **Lock duration**: Locks are held for minimal time
-- **Serialization**: Efficient state serialization/deserialization
+The Circuit Breaker library is continuously evolving. Here's our roadmap for upcoming features and improvements:
+
+| Feature                | Impact | Complexity | Priority |
+|------------------------|--------|------------|----------|
+| Metrics Collection     | High | Medium | High |
+| Fallback Mechanisms    | High | Medium | High |
+| Rolling Window         | Medium | Low | Medium |
+| Database Store         | Medium | Medium | Medium |
+| Frameworks Integration | High | Medium | Medium |
+| Health Checks          | Medium | Low | Low |
+| OpenTelemetry          | Low | High | Low |
+
+## 🎯 Contributing to the Roadmap
+
+We welcome contributions for any of these features! Here's how you can help:
+
+### 🚀 **High Priority (Looking for Contributors)**
+- **Metrics Collection Interface** - Add comprehensive metrics support
+- **Fallback Mechanisms** - Implement fallback strategies
+- **Configuration Validation** - Add runtime config validation
+
+### 🔧 **Getting Started**
+1. Check our [GitHub Issues](https://github.com/nullodyssey/circuit-breaker/issues) for feature requests
+2. Join the discussion on feature design
+3. Submit a pull request with your implementation
+4. Help with testing and documentation
+
+### 💡 **Feature Requests**
+Have an idea for a new feature? Please:
+1. Open a GitHub issue with the "enhancement" label
+2. Provide detailed use cases and examples
+3. Discuss the API design with the community
+4. Consider contributing the implementation
 
 ## 🤝 Contributing
 
