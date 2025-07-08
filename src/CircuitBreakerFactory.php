@@ -26,14 +26,16 @@ class CircuitBreakerFactory implements CircuitBreakerFactoryInterface
     /**
      * Create a new Circuit Breaker Factory.
      *
-     * @param int $defaultFailureThreshold       Default number of failures before opening circuit (default: 5)
-     * @param int $defaultRecoveryTimeoutSeconds Default time in seconds before attempting reset (default: 60)
-     * @param int $defaultHalfOpenMaxCalls       Default maximum calls in half-open state (default: 3)
+     * @param int                                    $defaultFailureThreshold       Default number of failures before opening circuit (default: 5)
+     * @param int                                    $defaultRecoveryTimeoutSeconds Default time in seconds before attempting reset (default: 60)
+     * @param int                                    $defaultHalfOpenMaxCalls       Default maximum calls in half-open state (default: 3)
+     * @param CircuitBreakerStoreInterface|null $stateStore                    Optional state store for persistent circuit breakers
      */
     public function __construct(
-        private readonly int $defaultFailureThreshold = 5,
-        private readonly int $defaultRecoveryTimeoutSeconds = 60,
-        private readonly int $defaultHalfOpenMaxCalls = 3,
+        private readonly int                           $defaultFailureThreshold = 5,
+        private readonly int                           $defaultRecoveryTimeoutSeconds = 60,
+        private readonly int                           $defaultHalfOpenMaxCalls = 3,
+        private readonly ?CircuitBreakerStoreInterface $stateStore = null,
     ) {
     }
 
@@ -50,16 +52,34 @@ class CircuitBreakerFactory implements CircuitBreakerFactoryInterface
     public function circuitFor(string $serviceName): CircuitBreakerInterface
     {
         $circuitBreaker = $this->circuitBreakers[$serviceName] ?? null;
-        if (null === $circuitBreaker) {
-            $this->circuitBreakers[$serviceName] = new CircuitBreaker(
+        if ($circuitBreaker instanceof CircuitBreakerInterface) {
+            return $circuitBreaker;
+        }
+
+        $this->circuitBreakers[$serviceName] = $this->createCircuitBreaker($serviceName);
+
+        return $this->circuitBreakers[$serviceName];
+    }
+
+    private function createCircuitBreaker(
+        string $serviceName
+    ): CircuitBreakerInterface {
+        if ($this->stateStore instanceof CircuitBreakerStoreInterface) {
+            return new PersistentCircuitBreaker(
                 serviceName: $serviceName,
+                stateStore: $this->stateStore,
                 failureThreshold: $this->defaultFailureThreshold,
                 recoveryTimeoutSeconds: $this->defaultRecoveryTimeoutSeconds,
                 halfOpenMaxCalls: $this->defaultHalfOpenMaxCalls,
             );
         }
 
-        return $this->circuitBreakers[$serviceName];
+        return new CircuitBreaker(
+            serviceName: $serviceName,
+            failureThreshold: $this->defaultFailureThreshold,
+            recoveryTimeoutSeconds: $this->defaultRecoveryTimeoutSeconds,
+            halfOpenMaxCalls: $this->defaultHalfOpenMaxCalls,
+        );
     }
 
     /**

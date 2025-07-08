@@ -258,4 +258,42 @@ final class CircuitBreaker implements CircuitBreakerInterface
     {
         return $this->nextAttemptTime;
     }
+
+    /**
+     * Get the current number of calls made in half-open state.
+     *
+     * @return int The number of calls made since entering half-open state
+     */
+    public function halfOpenCallCount(): int
+    {
+        return $this->halfOpenCallCount;
+    }
+
+    /**
+     * Get the current number of successful calls made in half-open state.
+     *
+     * @return int The number of successful calls made since entering half-open state
+     */
+    public function halfOpenSuccessCount(): int
+    {
+        return $this->halfOpenSuccessCount;
+    }
+
+    /**
+     * Restore the circuit breaker state from state data.
+     *
+     * This method is used for persistence and multi-worker scenarios
+     * to restore the exact state of the circuit breaker.
+     *
+     * @param CircuitBreakerStateData $stateData The state data to restore
+     */
+    public function restoreState(CircuitBreakerStateData $stateData): void
+    {
+        $this->state = $stateData->state;
+        $this->failureCount = $stateData->failureCount;
+        $this->halfOpenCallCount = $stateData->halfOpenCallCount;
+        $this->halfOpenSuccessCount = $stateData->halfOpenSuccessCount;
+        $this->lastFailureTime = $stateData->lastFailureTime;
+        $this->nextAttemptTime = $stateData->nextAttemptTime;
+    }
 }

@@ -97,4 +97,18 @@ interface CircuitBreakerInterface
      * @return ?\DateTimeImmutable The time when transition from OPEN to HALF_OPEN will be attempted, or null if not in OPEN state
      */
     public function nextAttemptTime(): ?\DateTimeImmutable;
+
+    /**
+     * Get the current number of calls made in half-open state.
+     *
+     * @return int The number of calls made since entering half-open state
+     */
+    public function halfOpenCallCount(): int;
+
+    /**
+     * Get the current number of successful calls made in half-open state.
+     *
+     * @return int The number of successful calls made since entering half-open state
+     */
+    public function halfOpenSuccessCount(): int;
 }

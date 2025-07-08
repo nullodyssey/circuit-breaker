@@ -4,8 +4,11 @@ declare(strict_types=1);
 
 namespace NullOdyssey\CircuitBreaker\Tests\Unit;
 
+use NullOdyssey\CircuitBreaker\CircuitBreaker;
 use NullOdyssey\CircuitBreaker\CircuitBreakerFactory;
 use NullOdyssey\CircuitBreaker\CircuitBreakerInterface;
+use NullOdyssey\CircuitBreaker\InMemoryStore;
+use NullOdyssey\CircuitBreaker\PersistentCircuitBreaker;
 use PHPUnit\Framework\TestCase;
 
 final class CircuitBreakerFactoryTest extends TestCase
@@ -146,6 +149,38 @@ final class CircuitBreakerFactoryTest extends TestCase
         // service-2 should still work
         $result = $circuitBreaker2->call(static fn () => 'success');
         self::assertSame('success', $result);
+    }
+
+    public function testFactoryWithStateStore(): void
+    {
+        $stateStore = new InMemoryStore();
+        $factory = new CircuitBreakerFactory(
+            defaultFailureThreshold: 2,
+            defaultRecoveryTimeoutSeconds: 30,
+            defaultHalfOpenMaxCalls: 1,
+            stateStore: $stateStore
+        );
+
+        $circuitBreaker = $factory->circuitFor('test-service');
+
+        // Should be PersistentCircuitBreaker when state store is provided
+        self::assertInstanceOf(PersistentCircuitBreaker::class, $circuitBreaker);
+
+        // Test that custom thresholds are used
+        $circuitBreaker->recordFailure();
+        self::assertTrue($circuitBreaker->isClosed());
+
+        $circuitBreaker->recordFailure();
+        self::assertTrue($circuitBreaker->isOpen());
+    }
+
+    public function testFactoryWithoutStateStore(): void
+    {
+        $factory = new CircuitBreakerFactory();
+        $circuitBreaker = $factory->circuitFor('test-service');
+
+        // Should be regular CircuitBreaker when no state store is provided
+        self::assertInstanceOf(CircuitBreaker::class, $circuitBreaker);
     }
 
     private function forceFailures(CircuitBreakerInterface $circuitBreaker, int $count): void
