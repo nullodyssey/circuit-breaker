@@ -25,10 +25,7 @@ A robust and feature-rich implementation of the Circuit Breaker pattern for PHP 
 - [Monitoring & Metrics](#-monitoring--metrics)
 - [Architecture](#-architecture)
 - [Thread Safety](#-thread-safety)
-- [Roadmap & Future Features](#-roadmap--future-features)
-  - [Phase 1: Core Enhancements](#phase-1-core-enhancements)
-  - [Phase 2: Advanced Features](#phase-2-advanced-features)
-  - [Phase 3: Framework Integration](#phase-3-framework-integration)
+- [Roadmap & Future Features](#-roadmap)
 - [Contributing](#-contributing)
 - [License](#-license)
 - [Further Reading](#-further-reading)
@@ -714,7 +711,7 @@ The persistent circuit breaker provides thread safety through:
 - **Atomic operations**: State changes are atomic within locks
 - **Consistent state**: Ensures all workers see the same state
 
-## 🗺️ Roadmap & Future Features
+## 🗺️ Roadmap
 
 The Circuit Breaker library is continuously evolving. Here's our roadmap for upcoming features and improvements:
 
