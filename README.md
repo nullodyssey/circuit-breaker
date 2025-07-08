@@ -311,24 +311,6 @@ Configure the circuit breaker services in your Symfony application:
 ```yaml
 # config/services.yaml
 services:
-    # Redis connection for locks
-    redis.lock:
-        class: Redis
-        calls:
-            - connect: ['%env(REDIS_HOST)%', '%env(int:REDIS_PORT)%']
-            - auth: ['%env(REDIS_PASSWORD)%']
-            - select: ['%env(int:REDIS_LOCK_DB)%']
-
-    # Lock store using Redis
-    lock.store.redis:
-        class: Symfony\Component\Lock\Store\RedisStore
-        arguments: ['@redis.lock']
-
-    # Lock factory
-    lock.factory:
-        class: Symfony\Component\Lock\LockFactory
-        arguments: ['@lock.store.redis']
-
     # Circuit breaker state store
     App\CircuitBreaker\SymfonyRedisStateStore:
         arguments:
